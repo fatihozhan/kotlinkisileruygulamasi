@@ -1,12 +1,13 @@
 package com.example.kisileruygulamasi.viewmodel
 
+import android.app.Application
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.example.kisileruygulamasi.entity.Kisiler
 import com.example.kisileruygulamasi.repo.KisilerDaoRepository
 
-class AnasayfaViewModel: ViewModel() {
-    var krepo = KisilerDaoRepository()
+class AnasayfaViewModel(var application: Application): AndroidViewModel(application) {
+    var krepo = KisilerDaoRepository(application)
     var kisilerListesi = MutableLiveData<List<Kisiler>>()
 
     init {

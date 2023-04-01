@@ -1,5 +1,6 @@
 package com.example.kisileruygulamasi
 
+import android.app.Application
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
@@ -13,6 +14,7 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -27,6 +29,7 @@ import androidx.navigation.navArgument
 import com.example.kisileruygulamasi.entity.Kisiler
 import com.example.kisileruygulamasi.ui.theme.KisilerUygulamasiTheme
 import com.example.kisileruygulamasi.viewmodel.AnasayfaViewModel
+import com.example.kisileruygulamasi.viewmodelfactory.AnasayfaViewModelFactory
 import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
@@ -50,8 +53,15 @@ class MainActivity : ComponentActivity() {
 fun Anasayfa(navController: NavController) {
     val aramaYapılıyorMu = remember { mutableStateOf(false) }
     val tf = remember { mutableStateOf("") }
-    val viewModel : AnasayfaViewModel = viewModel()
+    val context = LocalContext.current
+    val viewModel: AnasayfaViewModel = viewModel(
+        factory = AnasayfaViewModelFactory(context.applicationContext as Application)
+    )
     val kisilerListesi = viewModel.kisilerListesi.observeAsState(listOf())
+
+    LaunchedEffect(key1 = true){
+        viewModel.kisileriYukle()
+    }
 
     Scaffold(
         topBar = {
@@ -60,7 +70,7 @@ fun Anasayfa(navController: NavController) {
                     if (aramaYapılıyorMu.value) {
                         TextField(
                             value = tf.value,
-                            onValueChange = { viewModel.ara(it) ; tf.value = it },
+                            onValueChange = { viewModel.ara(it); tf.value = it },
                             label = {
                                 Text(text = "Ara")
                             },
@@ -125,10 +135,10 @@ fun Anasayfa(navController: NavController) {
                                     verticalAlignment = Alignment.CenterVertically,
                                     horizontalArrangement = Arrangement.SpaceBetween
                                 ) {
-                                    Text(text = "${kisi.kisiAd} - ${kisi.kisiTel}")
+                                    Text(text = "${kisi.kisi_adi} - ${kisi.kisi_tel}")
 
                                     IconButton(onClick = {
-                                        viewModel.sil(kisi.kisiId)
+                                        viewModel.sil(kisi.kisi_id)
                                     }) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.sil_resim),
