@@ -16,17 +16,18 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.kisileruygulamasi.viewmodel.KisiDetaySayfaViewModel
+import com.example.kisileruygulamasi.viewmodel.KisiKayitSayfaViewModel
 
 
 @Composable
 fun KisiKayit() {
-    val tfKisiAd = remember {
-        mutableStateOf("")
-    }
-    val tfKisiTel = remember {
-        mutableStateOf("")
-    }
+    val tfKisiAd = remember {mutableStateOf("")}
+    val tfKisiTel = remember {mutableStateOf("")}
     val localFocusManager = LocalFocusManager.current
+
+    val viewModel : KisiKayitSayfaViewModel = viewModel()
     Scaffold(
         topBar = {
             TopAppBar(title = { Text(text = "Kişi Kayıt") })
@@ -47,7 +48,7 @@ fun KisiKayit() {
                 Button(onClick = {
                     val kisiAdi = tfKisiAd.value
                     val kisiTel = tfKisiTel.value
-                    Log.e("Kişi Kayıt", "$kisiAdi - $kisiTel")
+                    viewModel.kayit(kisiAdi, kisiTel)
                     localFocusManager.clearFocus()
                 }, modifier = Modifier.size(250.dp, 50.dp)) {
                     Text(text = "Kaydet")

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,6 +17,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -24,6 +26,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.kisileruygulamasi.entity.Kisiler
 import com.example.kisileruygulamasi.ui.theme.KisilerUygulamasiTheme
+import com.example.kisileruygulamasi.viewmodel.AnasayfaViewModel
 import com.google.gson.Gson
 
 class MainActivity : ComponentActivity() {
@@ -47,14 +50,8 @@ class MainActivity : ComponentActivity() {
 fun Anasayfa(navController: NavController) {
     val aramaYapılıyorMu = remember { mutableStateOf(false) }
     val tf = remember { mutableStateOf("") }
-    val kisilerListesi = remember { mutableStateListOf<Kisiler>() }
-    LaunchedEffect(key1 = true) {
-        val k1 = Kisiler(1, "Ahmet", "111111")
-        val k2 = Kisiler(2, "Zeynep", "22222")
-        kisilerListesi.add(k1)
-        kisilerListesi.add(k2)
-
-    }
+    val viewModel : AnasayfaViewModel = viewModel()
+    val kisilerListesi = viewModel.kisilerListesi.observeAsState(listOf())
 
     Scaffold(
         topBar = {
@@ -63,7 +60,7 @@ fun Anasayfa(navController: NavController) {
                     if (aramaYapılıyorMu.value) {
                         TextField(
                             value = tf.value,
-                            onValueChange = { tf.value = it; Log.e("Kişi Arama", it) },
+                            onValueChange = { viewModel.ara(it) ; tf.value = it },
                             label = {
                                 Text(text = "Ara")
                             },
@@ -109,9 +106,9 @@ fun Anasayfa(navController: NavController) {
             it
             LazyColumn {
                 items(
-                    count = kisilerListesi.count(),
+                    count = kisilerListesi.value!!.count(),
                     itemContent = {
-                        val kisi = kisilerListesi[it]
+                        val kisi = kisilerListesi.value!![it]
                         Card(
                             modifier = Modifier
                                 .padding(all = 5.dp)
@@ -131,7 +128,7 @@ fun Anasayfa(navController: NavController) {
                                     Text(text = "${kisi.kisiAd} - ${kisi.kisiTel}")
 
                                     IconButton(onClick = {
-                                        Log.e("silme", "Kişi Silindi")
+                                        viewModel.sil(kisi.kisiId)
                                     }) {
                                         Icon(
                                             painter = painterResource(id = R.drawable.sil_resim),

@@ -14,18 +14,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.kisileruygulamasi.entity.Kisiler
+import com.example.kisileruygulamasi.viewmodel.KisiDetaySayfaViewModel
 
 
 @Composable
 fun KisiDetay(gelenKisi : Kisiler) {
-    val tfKisiAd = remember {
-        mutableStateOf("")
-    }
-    val tfKisiTel = remember {
-        mutableStateOf("")
-    }
+    val tfKisiAd = remember {mutableStateOf("")}
+    val tfKisiTel = remember {mutableStateOf("")}
     val localFocusManager = LocalFocusManager.current
+
+    val viewModel : KisiDetaySayfaViewModel = viewModel()
 
     LaunchedEffect(key1 = true){
         tfKisiAd.value = gelenKisi.kisiAd
@@ -51,7 +52,7 @@ fun KisiDetay(gelenKisi : Kisiler) {
                 Button(onClick = {
                     val kisiAdi = tfKisiAd.value
                     val kisiTel = tfKisiTel.value
-                    Log.e("Kişi Güncelle", "${gelenKisi.kisiId} - $kisiAdi - $kisiTel")
+                    viewModel.guncelle(gelenKisi.kisiId, kisiAdi, kisiTel)
                     localFocusManager.clearFocus()
                 }, modifier = Modifier.size(250.dp, 50.dp)) {
                     Text(text = "Guncelle")
