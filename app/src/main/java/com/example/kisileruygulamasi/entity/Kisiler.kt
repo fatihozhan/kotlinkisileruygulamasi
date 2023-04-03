@@ -1,15 +1,12 @@
 package com.example.kisileruygulamasi.entity
 
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.PrimaryKey
-import org.jetbrains.annotations.NotNull
+import com.google.firebase.database.IgnoreExtraProperties
 
-@Entity(tableName = "kisiler")
+@IgnoreExtraProperties
 data class Kisiler(
-    @PrimaryKey(autoGenerate = true) @ColumnInfo(name = "kisi_id") @NotNull var kisi_id: Int,
-    @ColumnInfo(name = "kisi_ad") @NotNull var kisi_adi: String,
-    @ColumnInfo(name = "kisi_tel") @NotNull var kisi_tel: String
+    var kisi_id: String? = "",
+    var kisi_adi: String? = "",
+    var kisi_tel: String? = ""
 ) {
 }
